@@ -1,1 +1,3 @@
-theme: jekyll-theme-tactile
+theme: jekyll-theme-slate
+title: SQL CAST and REPLACE
+description: Using CAST and REPLACE on price columns stored as strings
