@@ -1,37 +1,31 @@
-## Welcome to GitHub Pages
+## SQL - CAST and REPLACE - Converting string price to decimal
 
-You can use the [editor on GitHub](https://github.com/s-vinay/explore-sql/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Database: SQLite
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Thanks to https://sqliteonline.com/ which offers us a platform to explore SQL.
 
-### Markdown
+The page is written to answer queries around converting string prices to decimals for calculations / analytics. In general a price column should never have a string data type but due to the existing source database design data engineers / analysts face some challenges during transformations.
+So, let us get into action.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Below is the sample table definition created with only two columns orderid and price. Our focus will be on price primarily which has been intentionally defined as varchar with length 10.
 
-```markdown
-Syntax highlighted code block
+![image](https://user-images.githubusercontent.com/83854194/128607082-531b12ff-3e99-4531-89b5-d6af545d14f3.png)
 
-# Header 1
-## Header 2
-### Header 3
+The table is populated with 5 records below and notice the currency ("$") before the value. For this example we consider that all orders placed are in single currency. For the scenario where we have the orders placed in different currencies the best approach is to first convert the price to a common currency and then perform CAST / REPLACE.
 
-- Bulleted
-- List
+![image](https://user-images.githubusercontent.com/83854194/128607153-ffb96643-414c-4ca4-8cfe-7611a733e666.png)
 
-1. Numbered
-2. List
+Now, let us assume you need the sum of the column "price". This is not straight forward considering the type is varchar(10).
+CAST and REPLACE to the rescue,
+- CAST has the potential to convert data types
+- REPLACE, as the name suggests, helps with replacing sub-strings with the value we need
 
-**Bold** and _Italic_ and `Code` text
+Applying the functions, we get the output below showing SUM of the price column.
 
-[Link](url) and ![Image](src)
-```
+![image](https://user-images.githubusercontent.com/83854194/128607430-834f6909-ddfc-4d17-b50e-3d5a17416371.png)
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Let us break this down,
+- the inner function REPLACE(<column name>, <sub-string to replace>, <what to replace with?>) is used to replace $ with empty. After this operation, the data type of the column is still varchar
+- the outer function CAST(<column name> AS <to-be data type>) is used to convert the type. After this operation, the varchar price is converted to decimal of length 15 and 2 decimal places
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/s-vinay/explore-sql/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+And we got the expected outcome :)
